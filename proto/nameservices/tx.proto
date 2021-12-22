@@ -7,20 +7,19 @@ option go_package = "github.com/batphonghan/blog/x/nameservices/types";
 
 // Msg defines the Msg service.
 service Msg {
-      rpc ByName(MsgByName) returns (MsgByNameResponse);
+  rpc ByName(MsgByName) returns (MsgByNameResponse);
   rpc SetName(MsgSetName) returns (MsgSetNameResponse);
   rpc DeleteName(MsgDeleteName) returns (MsgDeleteNameResponse);
-// this line is used by starport scaffolding # proto/tx/rpc
+  // this line is used by starport scaffolding # proto/tx/rpc
 }
 
 message MsgByName {
   string creator = 1;
-  string nam = 2;
+  string name = 2;
   string bid = 3;
 }
 
-message MsgByNameResponse {
-}
+message MsgByNameResponse {}
 
 message MsgSetName {
   string creator = 1;
@@ -28,8 +27,7 @@ message MsgSetName {
   string value = 3;
 }
 
-message MsgSetNameResponse {
-}
+message MsgSetNameResponse {}
 
 message MsgDeleteName {
   string creator = 1;
@@ -37,7 +35,6 @@ message MsgDeleteName {
   string value = 3;
 }
 
-message MsgDeleteNameResponse {
-}
+message MsgDeleteNameResponse {}
 
 // this line is used by starport scaffolding # proto/tx/message
