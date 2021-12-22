@@ -1,0 +1,13 @@
+syntax = "proto3";
+package batphonghan.blog.nameservices;
+
+// this line is used by starport scaffolding # proto/tx/import
+
+option go_package = "github.com/batphonghan/blog/x/nameservices/types";
+
+// Msg defines the Msg service.
+service Msg {
+    // this line is used by starport scaffolding # proto/tx/rpc
+}
+
+// this line is used by starport scaffolding # proto/tx/message

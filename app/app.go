@@ -93,6 +93,9 @@ import (
 	blogmodule "github.com/batphonghan/blog/x/blog"
 	blogmodulekeeper "github.com/batphonghan/blog/x/blog/keeper"
 	blogmoduletypes "github.com/batphonghan/blog/x/blog/types"
+	nameservicesmodule "github.com/batphonghan/blog/x/nameservices"
+	nameservicesmodulekeeper "github.com/batphonghan/blog/x/nameservices/keeper"
+	nameservicesmoduletypes "github.com/batphonghan/blog/x/nameservices/types"
 	// this line is used by starport scaffolding # stargate/app/moduleImport
 )
 
@@ -144,18 +147,20 @@ var (
 		transfer.AppModuleBasic{},
 		vesting.AppModuleBasic{},
 		blogmodule.AppModuleBasic{},
+		nameservicesmodule.AppModuleBasic{},
 		// this line is used by starport scaffolding # stargate/app/moduleBasic
 	)
 
 	// module account permissions
 	maccPerms = map[string][]string{
-		authtypes.FeeCollectorName:     nil,
-		distrtypes.ModuleName:          nil,
-		minttypes.ModuleName:           {authtypes.Minter},
-		stakingtypes.BondedPoolName:    {authtypes.Burner, authtypes.Staking},
-		stakingtypes.NotBondedPoolName: {authtypes.Burner, authtypes.Staking},
-		govtypes.ModuleName:            {authtypes.Burner},
-		ibctransfertypes.ModuleName:    {authtypes.Minter, authtypes.Burner},
+		authtypes.FeeCollectorName:         nil,
+		distrtypes.ModuleName:              nil,
+		minttypes.ModuleName:               {authtypes.Minter},
+		stakingtypes.BondedPoolName:        {authtypes.Burner, authtypes.Staking},
+		stakingtypes.NotBondedPoolName:     {authtypes.Burner, authtypes.Staking},
+		govtypes.ModuleName:                {authtypes.Burner},
+		ibctransfertypes.ModuleName:        {authtypes.Minter, authtypes.Burner},
+		nameservicesmoduletypes.ModuleName: {authtypes.Minter, authtypes.Burner, authtypes.Staking},
 		// this line is used by starport scaffolding # stargate/app/maccPerms
 	}
 )
@@ -214,6 +219,8 @@ type App struct {
 	ScopedTransferKeeper capabilitykeeper.ScopedKeeper
 
 	BlogKeeper blogmodulekeeper.Keeper
+
+	NameservicesKeeper nameservicesmodulekeeper.Keeper
 	// this line is used by starport scaffolding # stargate/app/keeperDeclaration
 
 	// mm is the module manager
@@ -251,6 +258,7 @@ func New(
 		govtypes.StoreKey, paramstypes.StoreKey, ibchost.StoreKey, upgradetypes.StoreKey, feegrant.StoreKey,
 		evidencetypes.StoreKey, ibctransfertypes.StoreKey, capabilitytypes.StoreKey,
 		blogmoduletypes.StoreKey,
+		nameservicesmoduletypes.StoreKey,
 		// this line is used by starport scaffolding # stargate/app/storeKey
 	)
 	tkeys := sdk.NewTransientStoreKeys(paramstypes.TStoreKey)
@@ -357,6 +365,16 @@ func New(
 	)
 	blogModule := blogmodule.NewAppModule(appCodec, app.BlogKeeper, app.AccountKeeper, app.BankKeeper)
 
+	app.NameservicesKeeper = *nameservicesmodulekeeper.NewKeeper(
+		appCodec,
+		keys[nameservicesmoduletypes.StoreKey],
+		keys[nameservicesmoduletypes.MemStoreKey],
+		app.GetSubspace(nameservicesmoduletypes.ModuleName),
+
+		app.BankKeeper,
+	)
+	nameservicesModule := nameservicesmodule.NewAppModule(appCodec, app.NameservicesKeeper, app.AccountKeeper, app.BankKeeper)
+
 	// this line is used by starport scaffolding # stargate/app/keeperDefinition
 
 	// Create static IBC router, add transfer route, then set and seal it
@@ -396,6 +414,7 @@ func New(
 		params.NewAppModule(app.ParamsKeeper),
 		transferModule,
 		blogModule,
+		nameservicesModule,
 		// this line is used by starport scaffolding # stargate/app/appModule
 	)
 
@@ -431,6 +450,7 @@ func New(
 		evidencetypes.ModuleName,
 		ibctransfertypes.ModuleName,
 		blogmoduletypes.ModuleName,
+		nameservicesmoduletypes.ModuleName,
 		// this line is used by starport scaffolding # stargate/app/initGenesis
 	)
 
@@ -454,6 +474,7 @@ func New(
 		ibc.NewAppModule(app.IBCKeeper),
 		transferModule,
 		blogModule,
+		nameservicesModule,
 		// this line is used by starport scaffolding # stargate/app/appModule
 	)
 	app.sm.RegisterStoreDecoders()
@@ -642,6 +663,7 @@ func initParamsKeeper(appCodec codec.BinaryCodec, legacyAmino *codec.LegacyAmino
 	paramsKeeper.Subspace(ibctransfertypes.ModuleName)
 	paramsKeeper.Subspace(ibchost.ModuleName)
 	paramsKeeper.Subspace(blogmoduletypes.ModuleName)
+	paramsKeeper.Subspace(nameservicesmoduletypes.ModuleName)
 	// this line is used by starport scaffolding # stargate/app/paramSubspace
 
 	return paramsKeeper
