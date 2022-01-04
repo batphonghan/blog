@@ -148,6 +148,7 @@ var (
 		vesting.AppModuleBasic{},
 		blogmodule.AppModuleBasic{},
 		nameservicesmodule.AppModuleBasic{},
+		nameservicesmodule.AppModuleBasic{},
 		// this line is used by starport scaffolding # stargate/app/moduleBasic
 	)
 
@@ -160,6 +161,7 @@ var (
 		stakingtypes.NotBondedPoolName:     {authtypes.Burner, authtypes.Staking},
 		govtypes.ModuleName:                {authtypes.Burner},
 		ibctransfertypes.ModuleName:        {authtypes.Minter, authtypes.Burner},
+		nameservicesmoduletypes.ModuleName: {authtypes.Minter, authtypes.Burner, authtypes.Staking},
 		nameservicesmoduletypes.ModuleName: {authtypes.Minter, authtypes.Burner, authtypes.Staking},
 		// this line is used by starport scaffolding # stargate/app/maccPerms
 	}
@@ -221,6 +223,8 @@ type App struct {
 	BlogKeeper blogmodulekeeper.Keeper
 
 	NameservicesKeeper nameservicesmodulekeeper.Keeper
+
+	NameservicesKeeper nameservicesmodulekeeper.Keeper
 	// this line is used by starport scaffolding # stargate/app/keeperDeclaration
 
 	// mm is the module manager
@@ -258,6 +262,7 @@ func New(
 		govtypes.StoreKey, paramstypes.StoreKey, ibchost.StoreKey, upgradetypes.StoreKey, feegrant.StoreKey,
 		evidencetypes.StoreKey, ibctransfertypes.StoreKey, capabilitytypes.StoreKey,
 		blogmoduletypes.StoreKey,
+		nameservicesmoduletypes.StoreKey,
 		nameservicesmoduletypes.StoreKey,
 		// this line is used by starport scaffolding # stargate/app/storeKey
 	)
@@ -375,6 +380,16 @@ func New(
 	)
 	nameservicesModule := nameservicesmodule.NewAppModule(appCodec, app.NameservicesKeeper, app.AccountKeeper, app.BankKeeper)
 
+	app.NameservicesKeeper = *nameservicesmodulekeeper.NewKeeper(
+		appCodec,
+		keys[nameservicesmoduletypes.StoreKey],
+		keys[nameservicesmoduletypes.MemStoreKey],
+		app.GetSubspace(nameservicesmoduletypes.ModuleName),
+
+		app.BankKeeper,
+	)
+	nameservicesModule := nameservicesmodule.NewAppModule(appCodec, app.NameservicesKeeper, app.AccountKeeper, app.BankKeeper)
+
 	// this line is used by starport scaffolding # stargate/app/keeperDefinition
 
 	// Create static IBC router, add transfer route, then set and seal it
@@ -415,6 +430,7 @@ func New(
 		transferModule,
 		blogModule,
 		nameservicesModule,
+		nameservicesModule,
 		// this line is used by starport scaffolding # stargate/app/appModule
 	)
 
@@ -451,6 +467,7 @@ func New(
 		ibctransfertypes.ModuleName,
 		blogmoduletypes.ModuleName,
 		nameservicesmoduletypes.ModuleName,
+		nameservicesmoduletypes.ModuleName,
 		// this line is used by starport scaffolding # stargate/app/initGenesis
 	)
 
@@ -474,6 +491,7 @@ func New(
 		ibc.NewAppModule(app.IBCKeeper),
 		transferModule,
 		blogModule,
+		nameservicesModule,
 		nameservicesModule,
 		// this line is used by starport scaffolding # stargate/app/appModule
 	)
@@ -663,6 +681,7 @@ func initParamsKeeper(appCodec codec.BinaryCodec, legacyAmino *codec.LegacyAmino
 	paramsKeeper.Subspace(ibctransfertypes.ModuleName)
 	paramsKeeper.Subspace(ibchost.ModuleName)
 	paramsKeeper.Subspace(blogmoduletypes.ModuleName)
+	paramsKeeper.Subspace(nameservicesmoduletypes.ModuleName)
 	paramsKeeper.Subspace(nameservicesmoduletypes.ModuleName)
 	// this line is used by starport scaffolding # stargate/app/paramSubspace
 
