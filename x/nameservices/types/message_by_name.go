@@ -12,7 +12,7 @@ var _ sdk.Msg = &MsgByName{}
 func NewMsgByName(creator string, nam string, bid string) *MsgByName {
 	return &MsgByName{
 		Creator: creator,
-		Nam:     nam,
+		Name:    nam,
 		Bid:     bid,
 	}
 }
