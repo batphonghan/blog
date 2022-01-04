@@ -148,8 +148,6 @@ var (
 		vesting.AppModuleBasic{},
 		blogmodule.AppModuleBasic{},
 		nameservicesmodule.AppModuleBasic{},
-		nameservicesmodule.AppModuleBasic{},
-		nameservicesmodule.AppModuleBasic{},
 		// this line is used by starport scaffolding # stargate/app/moduleBasic
 	)
 
@@ -260,8 +258,6 @@ func New(
 		govtypes.StoreKey, paramstypes.StoreKey, ibchost.StoreKey, upgradetypes.StoreKey, feegrant.StoreKey,
 		evidencetypes.StoreKey, ibctransfertypes.StoreKey, capabilitytypes.StoreKey,
 		blogmoduletypes.StoreKey,
-		nameservicesmoduletypes.StoreKey,
-		nameservicesmoduletypes.StoreKey,
 		nameservicesmoduletypes.StoreKey,
 		// this line is used by starport scaffolding # stargate/app/storeKey
 	)
@@ -419,8 +415,6 @@ func New(
 		transferModule,
 		blogModule,
 		nameservicesModule,
-		nameservicesModule,
-		nameservicesModule,
 		// this line is used by starport scaffolding # stargate/app/appModule
 	)
 
@@ -457,8 +451,6 @@ func New(
 		ibctransfertypes.ModuleName,
 		blogmoduletypes.ModuleName,
 		nameservicesmoduletypes.ModuleName,
-		nameservicesmoduletypes.ModuleName,
-		nameservicesmoduletypes.ModuleName,
 		// this line is used by starport scaffolding # stargate/app/initGenesis
 	)
 
@@ -482,8 +474,6 @@ func New(
 		ibc.NewAppModule(app.IBCKeeper),
 		transferModule,
 		blogModule,
-		nameservicesModule,
-		nameservicesModule,
 		nameservicesModule,
 		// this line is used by starport scaffolding # stargate/app/appModule
 	)
@@ -673,8 +663,6 @@ func initParamsKeeper(appCodec codec.BinaryCodec, legacyAmino *codec.LegacyAmino
 	paramsKeeper.Subspace(ibctransfertypes.ModuleName)
 	paramsKeeper.Subspace(ibchost.ModuleName)
 	paramsKeeper.Subspace(blogmoduletypes.ModuleName)
-	paramsKeeper.Subspace(nameservicesmoduletypes.ModuleName)
-	paramsKeeper.Subspace(nameservicesmoduletypes.ModuleName)
 	paramsKeeper.Subspace(nameservicesmoduletypes.ModuleName)
 	// this line is used by starport scaffolding # stargate/app/paramSubspace
 
