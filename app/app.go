@@ -223,10 +223,6 @@ type App struct {
 	BlogKeeper blogmodulekeeper.Keeper
 
 	NameservicesKeeper nameservicesmodulekeeper.Keeper
-
-	NameservicesKeeper nameservicesmodulekeeper.Keeper
-
-	NameservicesKeeper nameservicesmodulekeeper.Keeper
 	// this line is used by starport scaffolding # stargate/app/keeperDeclaration
 
 	// mm is the module manager
@@ -372,26 +368,6 @@ func New(
 		app.GetSubspace(blogmoduletypes.ModuleName),
 	)
 	blogModule := blogmodule.NewAppModule(appCodec, app.BlogKeeper, app.AccountKeeper, app.BankKeeper)
-
-	app.NameservicesKeeper = *nameservicesmodulekeeper.NewKeeper(
-		appCodec,
-		keys[nameservicesmoduletypes.StoreKey],
-		keys[nameservicesmoduletypes.MemStoreKey],
-		app.GetSubspace(nameservicesmoduletypes.ModuleName),
-
-		app.BankKeeper,
-	)
-	nameservicesModule := nameservicesmodule.NewAppModule(appCodec, app.NameservicesKeeper, app.AccountKeeper, app.BankKeeper)
-
-	app.NameservicesKeeper = *nameservicesmodulekeeper.NewKeeper(
-		appCodec,
-		keys[nameservicesmoduletypes.StoreKey],
-		keys[nameservicesmoduletypes.MemStoreKey],
-		app.GetSubspace(nameservicesmoduletypes.ModuleName),
-
-		app.BankKeeper,
-	)
-	nameservicesModule := nameservicesmodule.NewAppModule(appCodec, app.NameservicesKeeper, app.AccountKeeper, app.BankKeeper)
 
 	app.NameservicesKeeper = *nameservicesmodulekeeper.NewKeeper(
 		appCodec,
