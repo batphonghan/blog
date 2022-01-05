@@ -30,14 +30,6 @@ func TestGenesisState_Validate(t *testing.T) {
 						Index: "1",
 					},
 				},
-				CommitList: []types.Commit{
-					{
-						Index: "0",
-					},
-					{
-						Index: "1",
-					},
-				},
 				// this line is used by starport scaffolding # types/genesis/validField
 			},
 			valid: true,
@@ -46,20 +38,6 @@ func TestGenesisState_Validate(t *testing.T) {
 			desc: "duplicated scavenge",
 			genState: &types.GenesisState{
 				ScavengeList: []types.Scavenge{
-					{
-						Index: "0",
-					},
-					{
-						Index: "0",
-					},
-				},
-			},
-			valid: false,
-		},
-		{
-			desc: "duplicated commit",
-			genState: &types.GenesisState{
-				CommitList: []types.Commit{
 					{
 						Index: "0",
 					},
