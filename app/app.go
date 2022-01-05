@@ -96,6 +96,9 @@ import (
 	nameservicesmodule "github.com/batphonghan/blog/x/nameservices"
 	nameservicesmodulekeeper "github.com/batphonghan/blog/x/nameservices/keeper"
 	nameservicesmoduletypes "github.com/batphonghan/blog/x/nameservices/types"
+	scavengemodule "github.com/batphonghan/blog/x/scavenge"
+	scavengemodulekeeper "github.com/batphonghan/blog/x/scavenge/keeper"
+	scavengemoduletypes "github.com/batphonghan/blog/x/scavenge/types"
 	// this line is used by starport scaffolding # stargate/app/moduleImport
 )
 
@@ -148,6 +151,7 @@ var (
 		vesting.AppModuleBasic{},
 		blogmodule.AppModuleBasic{},
 		nameservicesmodule.AppModuleBasic{},
+		scavengemodule.AppModuleBasic{},
 		// this line is used by starport scaffolding # stargate/app/moduleBasic
 	)
 
@@ -161,6 +165,7 @@ var (
 		govtypes.ModuleName:                {authtypes.Burner},
 		ibctransfertypes.ModuleName:        {authtypes.Minter, authtypes.Burner},
 		nameservicesmoduletypes.ModuleName: {authtypes.Minter, authtypes.Burner, authtypes.Staking},
+		scavengemoduletypes.ModuleName:     {authtypes.Minter, authtypes.Burner, authtypes.Staking},
 		// this line is used by starport scaffolding # stargate/app/maccPerms
 	}
 )
@@ -221,6 +226,8 @@ type App struct {
 	BlogKeeper blogmodulekeeper.Keeper
 
 	NameservicesKeeper nameservicesmodulekeeper.Keeper
+
+	ScavengeKeeper scavengemodulekeeper.Keeper
 	// this line is used by starport scaffolding # stargate/app/keeperDeclaration
 
 	// mm is the module manager
@@ -259,6 +266,7 @@ func New(
 		evidencetypes.StoreKey, ibctransfertypes.StoreKey, capabilitytypes.StoreKey,
 		blogmoduletypes.StoreKey,
 		nameservicesmoduletypes.StoreKey,
+		scavengemoduletypes.StoreKey,
 		// this line is used by starport scaffolding # stargate/app/storeKey
 	)
 	tkeys := sdk.NewTransientStoreKeys(paramstypes.TStoreKey)
@@ -375,6 +383,16 @@ func New(
 	)
 	nameservicesModule := nameservicesmodule.NewAppModule(appCodec, app.NameservicesKeeper, app.AccountKeeper, app.BankKeeper)
 
+	app.ScavengeKeeper = *scavengemodulekeeper.NewKeeper(
+		appCodec,
+		keys[scavengemoduletypes.StoreKey],
+		keys[scavengemoduletypes.MemStoreKey],
+		app.GetSubspace(scavengemoduletypes.ModuleName),
+
+		app.BankKeeper,
+	)
+	scavengeModule := scavengemodule.NewAppModule(appCodec, app.ScavengeKeeper, app.AccountKeeper, app.BankKeeper)
+
 	// this line is used by starport scaffolding # stargate/app/keeperDefinition
 
 	// Create static IBC router, add transfer route, then set and seal it
@@ -415,6 +433,7 @@ func New(
 		transferModule,
 		blogModule,
 		nameservicesModule,
+		scavengeModule,
 		// this line is used by starport scaffolding # stargate/app/appModule
 	)
 
@@ -451,6 +470,7 @@ func New(
 		ibctransfertypes.ModuleName,
 		blogmoduletypes.ModuleName,
 		nameservicesmoduletypes.ModuleName,
+		scavengemoduletypes.ModuleName,
 		// this line is used by starport scaffolding # stargate/app/initGenesis
 	)
 
@@ -475,6 +495,7 @@ func New(
 		transferModule,
 		blogModule,
 		nameservicesModule,
+		scavengeModule,
 		// this line is used by starport scaffolding # stargate/app/appModule
 	)
 	app.sm.RegisterStoreDecoders()
@@ -664,6 +685,7 @@ func initParamsKeeper(appCodec codec.BinaryCodec, legacyAmino *codec.LegacyAmino
 	paramsKeeper.Subspace(ibchost.ModuleName)
 	paramsKeeper.Subspace(blogmoduletypes.ModuleName)
 	paramsKeeper.Subspace(nameservicesmoduletypes.ModuleName)
+	paramsKeeper.Subspace(scavengemoduletypes.ModuleName)
 	// this line is used by starport scaffolding # stargate/app/paramSubspace
 
 	return paramsKeeper
