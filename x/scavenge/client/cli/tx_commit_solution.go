@@ -1,6 +1,8 @@
 package cli
 
 import (
+	"crypto/sha256"
+	"encoding/hex"
 	"strconv"
 
 	"github.com/batphonghan/blog/x/scavenge/types"
@@ -18,19 +20,23 @@ func CmdCommitSolution() *cobra.Command {
 		Short: "Broadcast message commit-solution",
 		Args:  cobra.ExactArgs(2),
 		RunE: func(cmd *cobra.Command, args []string) (err error) {
-			argSolutionHash := args[0]
-			argSolutionScavengerHash := args[1]
-
 			clientCtx, err := client.GetClientTxContext(cmd)
 			if err != nil {
 				return err
 			}
 
-			msg := types.NewMsgCommitSolution(
-				clientCtx.GetFromAddress().String(),
-				argSolutionHash,
-				argSolutionScavengerHash,
-			)
+			solution := args[0]
+			// find a hash of the solution
+			solutionHash := sha256.Sum256([]byte(solution))
+			// convert the solution hash to string
+			solutionHashString := hex.EncodeToString(solutionHash[:])
+			// convert a scavenger address to string
+			var scavenger = clientCtx.GetFromAddress().String()
+			var solutionScavengerHash = sha256.Sum256([]byte(solution + scavenger))
+			// convert the hash to string
+			var solutionScavengerHashString = hex.EncodeToString(solutionScavengerHash[:])
+
+			msg := types.NewMsgCommitSolution(clientCtx.GetFromAddress().String(), string(solutionHashString), string(solutionScavengerHashString))
 			if err := msg.ValidateBasic(); err != nil {
 				return err
 			}
